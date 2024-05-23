@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.express as px
 
 # Load the dataset
-df = pd.read_csv(r"C:\Users\SVI\Desktop\dot\dotReview_data.csv")
+df = pd.read_csv("dotReview_data.csv")
 
 # Clean the column names
 df.columns = ['name', 'energy_kcal', 'protein', 'carbohydrates', 'total_sugars', 'added_sugar', 
