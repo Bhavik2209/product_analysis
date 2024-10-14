@@ -1,6 +1,6 @@
 # main.py
 import streamlit as st
-from pages import single_product, product_comparison, nutritional_guidelines
+import single_product, product_comparison, nutritional_guidelines
 from sidebar import render_sidebar
 from utils import load_data
 import logging
