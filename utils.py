@@ -18,10 +18,10 @@ def load_data():
                       'dietary_fiber', 'trans_fat', 'saturated_fat', 'total_fat', 'cholesterol_mg', 
                       'sodium_mg', 'iron_mg', 'calcium_mg', 'ingredient_1', 'ingredient_2', 'ingredient_3', 
                       'ingredient_4', 'ingredient_5', 'ingredient_6', 'ingredient_7', 'ingredient_8', 
-                      'ingredient_9']
+                      'ingredient_9','ingredient_10','ingredient_11','ingredient_12']
         return df.drop(columns=['ingredient_1', 'ingredient_2', 'ingredient_3', 'ingredient_4', 
                                 'ingredient_5', 'ingredient_6', 'ingredient_7', 'ingredient_8', 
-                                'ingredient_9'])
+                                'ingredient_9','ingredient_10','ingredient_11','ingredient_12'])
     except Exception as e:
         logging.error(f"Error loading data: {str(e)}")
         st.error("Error loading data. Please check if the data file exists and is accessible.")
