@@ -118,4 +118,58 @@ def calculate_nutrient_ratios(product):
         else:
             ratios['Added to Total Sugar Ratio'] = 'N/A (No sugars)'
             
-    except Exce
+    except Exception as e:
+        st.error(f"Error calculating ratios: {str(e)}")
+        ratios = {'Error': 'Could not calculate ratios'}
+    
+    return ratios
+
+def create_visualizations(product):
+    try:
+        # Safe conversion of values for visualization
+        protein = safe_float_conversion(product['protein'])
+        carbs = safe_float_conversion(product['carbohydrates'])
+        total_fat = safe_float_conversion(product['total_fat'])
+        saturated_fat = safe_float_conversion(product['saturated_fat'])
+        trans_fat = safe_float_conversion(product['trans_fat'])
+        added_sugar = safe_float_conversion(product['added_sugar'])
+        total_sugars = safe_float_conversion(product['total_sugars'])
+        
+        # Macronutrient pie chart
+        fig_macronutrient = px.pie(
+            values=[protein, carbs, total_fat], 
+            names=['Protein', 'Carbohydrates', 'Total Fat'], 
+            title=f'Macronutrient Composition of {product["name"]}'
+        )
+        
+        # Fat composition pie chart
+        other_fat = max(0, total_fat - saturated_fat - trans_fat)  # Ensure non-negative
+        fig_fat = px.pie(
+            values=[saturated_fat, trans_fat, other_fat], 
+            names=['Saturated Fat', 'Trans Fat', 'Other Fat'], 
+            title=f'Fat Composition of {product["name"]}'
+        )
+        
+        # Sugar composition pie chart
+        natural_sugar = max(0, total_sugars - added_sugar)  # Ensure non-negative
+        if total_sugars > 0:
+            fig_sugar = px.pie(
+                values=[added_sugar, natural_sugar], 
+                names=['Added Sugar', 'Natural Sugar'], 
+                title=f'Sugar Composition of {product["name"]}'
+            )
+        else:
+            # Create a placeholder chart if no sugars
+            fig_sugar = px.pie(
+                values=[1], 
+                names=['No Sugar Content'], 
+                title=f'Sugar Composition of {product["name"]} - No Sugars'
+            )
+        
+        return fig_macronutrient, fig_fat, fig_sugar
+        
+    except Exception as e:
+        st.error(f"Error creating visualizations: {str(e)}")
+        # Return empty figures in case of error
+        empty_fig = px.pie(values=[1], names=['Error'], title='Visualization Error')
+        return empty_fig, empty_fig, empty_fig
