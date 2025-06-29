@@ -18,7 +18,7 @@ GROQ_API_KEY = st.secrets['default']['GROQ_API_KEY']
 
 # Setup LangChain LLM
 llm = ChatGroq(
-    model="llama-3.1-70b-versatile",
+    model="llama-3.3-70b-versatile",
     temperature=0,
     max_tokens=None,
     timeout=None,
