@@ -15,6 +15,15 @@ def main():
 
         # Load data
         df = load_data()
+        
+        # Check if data was loaded successfully
+        if df is None or df.empty:
+            st.error("Failed to load data. Please check if the CSV file exists and is properly formatted.")
+            st.info("Please ensure 'dotReview_data_updated.csv' is in the project directory and contains valid data.")
+            return
+
+        # Display data info for debugging
+        logging.info(f"Data loaded successfully. Shape: {df.shape}, Columns: {list(df.columns)}")
 
         # Render sidebar and get selected page
         selected_page = render_sidebar(df)
@@ -31,7 +40,8 @@ def main():
 
     except Exception as e:
         logging.error(f"An error occurred: {str(e)}")
-        st.error("An unexpected error occurred. Please try again later.")
+        st.error(f"An unexpected error occurred: {str(e)}")
+        st.info("Please check the logs for more details and ensure all required files are present.")
 
 if __name__ == "__main__":
     main()
