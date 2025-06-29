@@ -5,20 +5,20 @@ import os
 import logging
 
 # Import LangChain and relevant LLM
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 
 import getpass
 import os
 
-if "GOOGLE_API_KEY" not in os.environ:
-    os.environ["GOOGLE_API_KEY"] = st.secrets['default']['GOOGLE_API_KEY']
+if "GROQ_API_KEY" not in os.environ:
+    os.environ["GROQ_API_KEY"] = st.secrets['default']['GROQ_API_KEY']
 # Load environment variables
-GOOGLE_API_KEY = st.secrets['default']['GOOGLE_API_KEY']
+GROQ_API_KEY = st.secrets['default']['GROQ_API_KEY']
 
 # Setup LangChain LLM
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
+llm = ChatGroq(
+    model="llama-3.1-70b-versatile",
     temperature=0,
     max_tokens=None,
     timeout=None,
@@ -100,14 +100,13 @@ def generate_nutritional_insights(product):
     5. Areas of Concern
     6. Recommendations for Improvement
     """
-    prompt = PromptTemplate(
-        input_variables=[
-            "name", "energy_kcal", "protein", "carbohydrates", "total_sugars", "added_sugar",
-            "dietary_fiber", "total_fat", "saturated_fat", "trans_fat", "cholesterol_mg",
-            "sodium_mg", "iron_mg", "calcium_mg"
-        ],
-        template=template
-    )
+    
+    required_keys = [
+        "name", "energy_kcal", "protein", "carbohydrates", "total_sugars", "added_sugar",
+        "dietary_fiber", "total_fat", "saturated_fat", "trans_fat", "cholesterol_mg",
+        "sodium_mg", "iron_mg", "calcium_mg"
+    ]
+    
     try:
         # Format the prompt
         prompt = PromptTemplate(
@@ -118,9 +117,9 @@ def generate_nutritional_insights(product):
 
         # Generate response
         logging.info("Sending prompt to LangChain...")
-        response = llm(prompt_filled)
+        response = llm.invoke(prompt_filled)
         logging.info("Received response from LangChain.")
-        return response
+        return response.content
     except Exception as e:
         logging.error(f"Error generating nutritional insights: {str(e)}")
         return "Unable to generate nutritional insights at this time. Please try again later."
