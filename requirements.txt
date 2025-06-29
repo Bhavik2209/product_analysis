@@ -4,3 +4,7 @@ seaborn
 streamlit
 plotly
 google-generativeai
+langchain
+langchain-groq
+langchain-core
+logging
