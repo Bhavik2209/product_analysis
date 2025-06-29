@@ -28,7 +28,7 @@ llm = ChatGroq(
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv("dotReview_data.csv")
+        df = pd.read_csv("dotReview_data_updated.csv")
         df.columns = ['name', 'energy_kcal', 'protein', 'carbohydrates', 'total_sugars', 'added_sugar', 
                       'dietary_fiber', 'trans_fat', 'saturated_fat', 'total_fat', 'cholesterol_mg', 
                       'sodium_mg', 'iron_mg', 'calcium_mg', 'ingredient_1', 'ingredient_2', 'ingredient_3', 
