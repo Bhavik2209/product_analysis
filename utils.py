@@ -28,19 +28,49 @@ llm = ChatGroq(
 @st.cache_data
 def load_data():
     try:
-        df = pd.read_csv("dotReview_data_updated.csv")
+        # Try multiple encodings to handle the file properly
+        encodings_to_try = ['utf-8', 'latin-1', 'cp1252', 'iso-8859-1']
+        
+        df = None
+        for encoding in encodings_to_try:
+            try:
+                logging.info(f"Attempting to read CSV with {encoding} encoding...")
+                df = pd.read_csv("dotReview_data_updated.csv", encoding=encoding)
+                logging.info(f"Successfully loaded data with {encoding} encoding")
+                break
+            except UnicodeDecodeError as e:
+                logging.warning(f"Failed to read with {encoding} encoding: {str(e)}")
+                continue
+            except Exception as e:
+                logging.error(f"Error reading CSV with {encoding} encoding: {str(e)}")
+                continue
+        
+        if df is None:
+            raise Exception("Could not read CSV file with any of the attempted encodings")
+        
+        # Set column names
         df.columns = ['name', 'energy_kcal', 'protein', 'carbohydrates', 'total_sugars', 'added_sugar', 
                       'dietary_fiber', 'trans_fat', 'saturated_fat', 'total_fat', 'cholesterol_mg', 
                       'sodium_mg', 'iron_mg', 'calcium_mg', 'ingredient_1', 'ingredient_2', 'ingredient_3', 
                       'ingredient_4', 'ingredient_5', 'ingredient_6', 'ingredient_7', 'ingredient_8', 
                       'ingredient_9','ingredient_10','ingredient_11','ingredient_12']
-        return df.drop(columns=['ingredient_1', 'ingredient_2', 'ingredient_3', 'ingredient_4', 
+        
+        # Drop ingredient columns
+        df_cleaned = df.drop(columns=['ingredient_1', 'ingredient_2', 'ingredient_3', 'ingredient_4', 
                                 'ingredient_5', 'ingredient_6', 'ingredient_7', 'ingredient_8', 
                                 'ingredient_9','ingredient_10','ingredient_11','ingredient_12'])
+        
+        logging.info(f"Data loaded successfully. Shape: {df_cleaned.shape}")
+        return df_cleaned
+        
+    except FileNotFoundError:
+        logging.error("CSV file 'dotReview_data_updated.csv' not found")
+        st.error("Data file not found. Please ensure 'dotReview_data_updated.csv' exists in the project directory.")
+        return pd.DataFrame()  # Return empty DataFrame instead of None
     except Exception as e:
         logging.error(f"Error loading data: {str(e)}")
-        st.error("Error loading data. Please check if the data file exists and is accessible.")
-        return None
+        st.error(f"Error loading data: {str(e)}. Please check if the data file exists and is accessible.")
+        return pd.DataFrame()  # Return empty DataFrame instead of None
 
 def calculate_bmi(weight, height):
     bmi = weight / (height/100)**2
